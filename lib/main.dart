@@ -1,38 +1,33 @@
 import 'package:flutter/material.dart';
+import 'src/app.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:window_size/window_size.dart';
+import 'package:url_strategy/url_strategy.dart';
+import 'dart:io' show Platform;
 
 const Color darkBlue = Color.fromARGB((255), 18, 32, 47);
 
 void main() {
-  runApp(const MyApp());
+  setHashUrlStrategy();
+  setupWindow();
+  runApp(const Bookstore());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+const double windowWidth = 480;
+const double windowHeight = 854;
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: darkBlue,
-      ),
-      debugShowCheckedModeBanner: false,
-      home: const Scaffold(
-        body: Center(
-          child: MyWidget(),
-        ),
-      ),
-    );
-  }
-}
-
-class MyWidget extends StatelessWidget {
-  const MyWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      'Hello, World!',
-      style: Theme.of(context).textTheme.headlineMedium,
-    );
+void setupWindow() {
+  if(!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
+    WidgetsFlutterBinding.ensureInitialized();
+    setWindowTitle('Navigation and routing');
+    setWindowMaxSize(const Size(windowWidth, windowHeight));
+    setWindowMinSize(const Size(windowWidth, windowHeight));
+    getCurrentScreen().then((screen) {
+        setWindowFrame(Rect.fromCenter(
+          center: screen!.frame.center,
+          width: windowWidth,
+          height: windowHeight,
+        ));
+    });
   }
 }
